@@ -49,8 +49,8 @@ class MenuCharacter extends FlxSprite
 				var characterPath:String = 'images/menucharacters/' + character + '.json';
 
 				var path:String = Paths.getPath(characterPath, TEXT);
-				#if MODS_ALLOWED
-				if (!FileSystem.exists(path))
+				#if MODS_FOR_DESKTOP
+				if (!mobile.Utils.exists(path))
 				#else
 				if (!Assets.exists(path))
 				#end
@@ -63,8 +63,8 @@ class MenuCharacter extends FlxSprite
 				var charFile:MenuCharacterFile = null;
 				try
 				{
-					#if MODS_ALLOWED
-					charFile = Json.parse(File.getContent(path));
+					#if MODS_FOR_DESKTOP
+					charFile = Json.parse(mobile.Utils.getContent(path));
 					#else
 					charFile = Json.parse(Assets.getText(path));
 					#end

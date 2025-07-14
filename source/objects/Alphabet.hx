@@ -282,8 +282,8 @@ class AlphaCharacter extends FlxSprite
 	public static function loadAlphabetData(request:String = 'alphabet')
 	{
 		var path:String = Paths.getPath('images/$request.json');
-		#if MODS_ALLOWED
-		if(!FileSystem.exists(path))
+		#if MODS_FOR_DESKTOP
+		if(!mobile.Utils.exists(path))
 		#else
 		if(!Assets.exists(path, TEXT))
 		#end
@@ -292,8 +292,8 @@ class AlphaCharacter extends FlxSprite
 		allLetters = new Map<String, Null<Letter>>();
 		try
 		{
-			#if MODS_ALLOWED
-			var data:Dynamic = Json.parse(File.getContent(path));
+			#if MODS_FOR_DESKTOP
+			var data:Dynamic = Json.parse(mobile.Utils.getContent(path));
 			#else
 			var data:Dynamic = Json.parse(Assets.getText(path));
 			#end

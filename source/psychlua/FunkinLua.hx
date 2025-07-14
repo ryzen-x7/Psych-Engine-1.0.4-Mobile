@@ -1244,8 +1244,8 @@ class FunkinLua {
 			var songPath:String = Paths.formatToSongPath(Song.loadedSongName);
 			#if TRANSLATIONS_ALLOWED
 			path = Paths.getPath('data/$songPath/${dialogueFile}_${ClientPrefs.data.language}.json', TEXT);
-			#if MODS_ALLOWED
-			if(!FileSystem.exists(path))
+			#if MODS_FOR_DESKTOP
+			if(!mobile.Utils.exists(path))
 			#else
 			if(!Assets.exists(path, TEXT))
 			#end
@@ -1254,8 +1254,8 @@ class FunkinLua {
 
 			luaTrace('startDialogue: Trying to load dialogue: ' + path);
 
-			#if MODS_ALLOWED
-			if(FileSystem.exists(path))
+			#if MODS_FOR_DESKTOP
+			if(mobile.Utils.exists(path))
 			#else
 			if(Assets.exists(path, TEXT))
 			#end
@@ -1281,7 +1281,7 @@ class FunkinLua {
 		});
 		Lua_helper.add_callback(lua, "startVideo", function(videoFile:String, ?canSkip:Bool = true, ?forMidSong:Bool = false, ?shouldLoop:Bool = false, ?playOnLoad:Bool = true) {
 			#if VIDEOS_ALLOWED
-			if(FileSystem.exists(Paths.video(videoFile)))
+			if(mobile.Utils.exists(Paths.video(videoFile)))
 			{
 				if(game.videoCutscene != null)
 				{
@@ -1756,16 +1756,16 @@ class FunkinLua {
 	{
 		if(!scriptFile.endsWith(ext)) scriptFile += ext;
 		var path:String = Paths.getPath(scriptFile, TEXT);
-		#if MODS_ALLOWED
-		if(FileSystem.exists(path))
+		#if MODS_FOR_DESKTOP
+		if(mobile.Utils.exists(path))
 		#else
 		if(Assets.exists(path, TEXT))
 		#end
 		{
 			return path;
 		}
-		#if MODS_ALLOWED
-		else if(FileSystem.exists(scriptFile))
+		#if MODS_FOR_DESKTOP
+		else if(mobile.Utils.exists(scriptFile))
 		#else
 		else if(Assets.exists(scriptFile, TEXT))
 		#end
@@ -1830,21 +1830,21 @@ class FunkinLua {
 
 		for (folder in foldersToCheck)
 		{
-			if(FileSystem.exists(folder))
+			if(mobile.Utils.exists(folder))
 			{
 				var frag:String = folder + name + '.frag';
 				var vert:String = folder + name + '.vert';
 				var found:Bool = false;
-				if(FileSystem.exists(frag))
+				if(mobile.Utils.exists(frag))
 				{
-					frag = File.getContent(frag);
+					frag = mobile.Utils.getContent(frag);
 					found = true;
 				}
 				else frag = null;
 
-				if(FileSystem.exists(vert))
+				if(mobile.Utils.exists(vert))
 				{
-					vert = File.getContent(vert);
+					vert = mobile.Utils.getContent(vert);
 					found = true;
 				}
 				else vert = null;

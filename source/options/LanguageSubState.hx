@@ -25,7 +25,7 @@ class LanguageSubState extends MusicBeatSubstate
 		var directories:Array<String> = Mods.directoriesWithFile(Paths.getSharedPath(), 'data/');
 		for (directory in directories)
 		{
-			for (file in FileSystem.readDirectory(directory))
+			for (file in mobile.Utils.readDirectory(directory))
 			{
 				if(file.toLowerCase().endsWith('.lang'))
 				{
@@ -36,8 +36,8 @@ class LanguageSubState extends MusicBeatSubstate
 					if(!displayLanguages.exists(langFile))
 					{
 						var path:String = '$directory/$file';
-						#if MODS_ALLOWED 
-						var txt:String = File.getContent(path);
+						#if MODS_FOR_DESKTOP
+						var txt:String = mobile.Utils.getContent(path);
 						#else
 						var txt:String = Assets.getText(path);
 						#end

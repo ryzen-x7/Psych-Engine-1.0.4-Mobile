@@ -149,10 +149,10 @@ class ExtraFunctions
 
 		// File management
 		Lua_helper.add_callback(lua, "checkFileExists", function(filename:String, ?absolute:Bool = false) {
-			#if MODS_ALLOWED
-			if(absolute) return FileSystem.exists(filename);
+			#if MODS_FOR_DESKTOP
+			if(absolute) return mobile.Utils.exists(filename);
 
-			return FileSystem.exists(Paths.getPath(filename, TEXT));
+			return mobile.Utils.exists(Paths.getPath(filename, TEXT));
 
 			#else
 			if(absolute) return Assets.exists(filename, TEXT);
@@ -163,12 +163,12 @@ class ExtraFunctions
 		Lua_helper.add_callback(lua, "saveFile", function(path:String, content:String, ?absolute:Bool = false)
 		{
 			try {
-				#if MODS_ALLOWED
+				#if MODS_FOR_DESKTOP
 				if(!absolute)
-					File.saveContent(Paths.mods(path), content);
+					mobile.Utils.saveContent(Paths.mods(path), content);
 				else
 				#end
-					File.saveContent(path, content);
+					File.saveContent(path, content); // Bruh
 
 				return true;
 			} catch (e:Dynamic) {
@@ -181,9 +181,9 @@ class ExtraFunctions
 			try {
 				var lePath:String = path;
 				if(!absolute) lePath = Paths.getPath(path, TEXT, !ignoreModFolders);
-				if(FileSystem.exists(lePath))
+				if(mobile.Utils.exists(lePath))
 				{
-					FileSystem.deleteFile(lePath);
+					FileSystem.deleteFile(lePath); // Bruh
 					return true;
 				}
 			} catch (e:Dynamic) {
@@ -196,7 +196,7 @@ class ExtraFunctions
 		});
 		Lua_helper.add_callback(lua, "directoryFileList", function(folder:String) {
 			var list:Array<String> = [];
-			#if sys
+			#if sys // hmm
 			if(FileSystem.exists(folder)) {
 				for (folder in FileSystem.readDirectory(folder)) {
 					if (!list.contains(folder)) {

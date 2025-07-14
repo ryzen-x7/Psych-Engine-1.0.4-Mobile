@@ -1130,7 +1130,7 @@ class StageEditorState extends MusicBeatState implements PsychUIEventHandler.Psy
 			var characterPath:String = 'stages/$selected.json';
 			var path:String = Paths.getPath(characterPath, TEXT, null, true);
 			#if MODS_ALLOWED
-			if (FileSystem.exists(path))
+			if (mobile.Utils.exists(path))
 			#else
 			if (Assets.exists(path))
 			#end
@@ -1740,7 +1740,7 @@ class StageEditorState extends MusicBeatState implements PsychUIEventHandler.Psy
 						var p1:String = '$pathNoExt.$ext';
 						var p2:String = modFolder + '$fileName.$ext';
 						trace(p1, p2);
-						if(FileSystem.exists(p1))
+						if(mobile.Utils.exists(p1))
 							File.saveBytes(p2, File.getBytes(p1));
 					}
 

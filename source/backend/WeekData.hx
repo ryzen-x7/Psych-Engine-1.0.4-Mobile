@@ -75,7 +75,7 @@ class WeekData {
 	{
 		weeksList = [];
 		weeksLoaded.clear();
-		#if MODS_ALLOWED
+		#if MODS_FOR_DESKTOP
 		var directories:Array<String> = [Paths.mods(), Paths.getSharedPath()];
 		var originalLength:Int = directories.length;
 
@@ -95,7 +95,7 @@ class WeekData {
 					if(week != null) {
 						var weekFile:WeekData = new WeekData(week, sexList[i]);
 
-						#if MODS_ALLOWED
+						#if MODS_FOR_DESKTOP
 						if(j >= originalLength) {
 							weekFile.folder = directories[j].substring(Paths.mods().length, directories[j].length-1);
 						}
@@ -110,24 +110,24 @@ class WeekData {
 			}
 		}
 
-		#if MODS_ALLOWED
+		#if MODS_FOR_DESKTOP
 		for (i in 0...directories.length) {
 			var directory:String = directories[i] + 'weeks/';
-			if(FileSystem.exists(directory)) {
+			if(mobile.Utils.exists(directory)) {
 				var listOfWeeks:Array<String> = CoolUtil.coolTextFile(directory + 'weekList.txt');
 				for (daWeek in listOfWeeks)
 				{
 					var path:String = directory + daWeek + '.json';
-					if(FileSystem.exists(path))
+					if(mobile.Utils.exists(path))
 					{
 						addWeek(daWeek, path, directories[i], i, originalLength);
 					}
 				}
 
-				for (file in FileSystem.readDirectory(directory))
+				for (file in mobile.Utils.readDirectory(directory))
 				{
 					var path = haxe.io.Path.join([directory, file]);
-					if (!FileSystem.isDirectory(path) && file.endsWith('.json'))
+					if (!mobile.Utils.isDirectory(path) && file.endsWith('.json'))
 					{
 						addWeek(file.substr(0, file.length - 5), path, directories[i], i, originalLength);
 					}
@@ -147,7 +147,7 @@ class WeekData {
 				var weekFile:WeekData = new WeekData(week, weekToCheck);
 				if(i >= originalLength)
 				{
-					#if MODS_ALLOWED
+					#if MODS_FOR_DESKTOP
 					weekFile.folder = directory.substring(Paths.mods().length, directory.length-1);
 					#end
 				}
@@ -162,8 +162,8 @@ class WeekData {
 
 	private static function getWeekFile(path:String):WeekFile {
 		var rawJson:String = null;
-		#if MODS_ALLOWED
-		if(FileSystem.exists(path)) {
+		#if MODS_FOR_DESKTOP
+		if(mobile.Utils.exists(path)) {
 			rawJson = File.getContent(path);
 		}
 		#else

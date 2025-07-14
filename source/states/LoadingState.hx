@@ -477,10 +477,10 @@ class LoadingState extends MusicBeatState
 				var path:String = Paths.json('$folder/preload');
 				var json:Dynamic = null;
 
-				#if MODS_ALLOWED
+				#if MODS_FOR_DESKTOP
 				var moddyFile:String = Paths.modsJson('$folder/preload');
-				if (FileSystem.exists(moddyFile)) json = Json.parse(File.getContent(moddyFile));
-				else json = Json.parse(File.getContent(path));
+				if (mobile.Utils.exists(moddyFile)) json = Json.parse(mobile.Utils.getContent(moddyFile));
+				else json = Json.parse(mobile.Utils.getContent(path));
 				#else
 				json = Json.parse(Assets.getText(path));
 				#end
@@ -624,7 +624,7 @@ class LoadingState extends MusicBeatState
 			{
 				for (subfolder in Mods.directoriesWithFile(Paths.getSharedPath(), '$prefix/$nam'))
 				{
-					for (file in FileSystem.readDirectory(subfolder))
+					for (file in mobile.Utils.readDirectory(subfolder))
 					{
 						if(file.endsWith(ext))
 						{
@@ -712,8 +712,8 @@ class LoadingState extends MusicBeatState
 		try
 		{
 			var path:String = Paths.getPath('characters/$char.json', TEXT);
-			#if MODS_ALLOWED
-			var character:Dynamic = Json.parse(File.getContent(path));
+			#if MODS_FOR_DESKTOP
+			var character:Dynamic = Json.parse(mobile.Utils.getContent(path));
 			#else
 			var character:Dynamic = Json.parse(Assets.getText(path));
 			#end
@@ -723,7 +723,7 @@ class LoadingState extends MusicBeatState
 			img = img.trim();
 			#if flxanimate
 			var animToFind:String = Paths.getPath('images/$img/Animation.json', TEXT);
-			if (#if MODS_ALLOWED FileSystem.exists(animToFind) || #end Assets.exists(animToFind))
+			if (#if MODS_FOR_DESKTOP mobile.Utils.exists(animToFind) || #end Assets.exists(animToFind))
 				isAnimateAtlas = true;
 			#end
 

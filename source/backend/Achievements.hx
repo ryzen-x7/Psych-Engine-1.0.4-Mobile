@@ -206,7 +206,7 @@ class Achievements {
 		_sortID++;
 	}
 
-	#if MODS_ALLOWED
+	#if MODS_FOR_DESKTOP
 	public static function reloadList()
 	{
 		// remove modded achievements
@@ -231,7 +231,7 @@ class Achievements {
 	inline static function loadAchievementJson(path:String, addMods:Bool = true)
 	{
 		var retVal:Array<Dynamic> = null;
-		if(FileSystem.exists(path)) {
+		if(mobile.Utils.exists(path)) {
 			try {
 				var rawJson:String = File.getContent(path).trim();
 				if(rawJson != null && rawJson.length > 0) retVal = tjson.TJSON.parse(rawJson); //Json.parse('{"achievements": $rawJson}').achievements;

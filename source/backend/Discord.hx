@@ -141,7 +141,7 @@ class DiscordClient
 		return newID;
 	}
 
-	#if MODS_ALLOWED
+	#if MODS_FOR_DESKTOP
 	public static function loadModRPC()
 	{
 		var pack:Dynamic = Mods.getPack();

@@ -162,156 +162,180 @@ class DialogueBoxPsych extends FlxSpriteGroup
 			return;
 		}
 
+		var backButtonReleased:Bool = #if android FlxG.android.justReleased.BACK #else Controls.instance.BACK #end;
+    	var acceptButtonReleased:Bool = Controls.instance.ACCEPT;
+
+		var screenJustTouched:Bool = false;
+		for (touch in FlxG.touches.list) {
+			if (touch.justPressed) {
+				screenJustTouched = true;
+				break;
+			}
+		}
+
 		if(!dialogueEnded) {
 			bgFade.alpha += 0.5 * elapsed;
 			if(bgFade.alpha > 0.5) bgFade.alpha = 0.5;
 
-			var back:Bool = Controls.instance.BACK;
-			if(Controls.instance.ACCEPT || back) {
-				if(!daText.finishedText && !back)
+			if(backButtonReleased) {
+				if(!daText.finishedText)
 				{
 					daText.finishText();
 					if(skipDialogueThing != null) {
 						skipDialogueThing();
 					}
 				}
-				else if(back || currentText >= dialogueList.dialogue.length)
+				else if(back || currentText >= dialogueList.dialogue.length) // back || currentText >= dialogueList.dialogue.length
 				{
 					dialogueEnded = true;
-					for (i in 0...textBoxTypes.length) {
-						var checkArray:Array<String> = ['', 'center-'];
-						var animName:String = box.animation.curAnim.name;
-						for (j in 0...checkArray.length) {
-							if(animName == checkArray[j] + textBoxTypes[i] || animName == checkArray[j] + textBoxTypes[i] + 'Open') {
-								box.animation.play(checkArray[j] + textBoxTypes[i] + 'Open', true);
-							}
-						}
-					}
-
-					box.animation.curAnim.curFrame = box.animation.curAnim.frames.length - 1;
-					box.animation.curAnim.reverse();
-					if(daText != null)
-					{
-						daText.kill();
-						remove(daText);
-						daText.destroy();
-					}
-					skipText.visible = false;
-					updateBoxOffsets(box);
-					FlxG.sound.music.fadeOut(1, 0, (_) -> FlxG.sound.music.stop());
-				} else {
-					startNextDialog();
+					handleDialogueEndAnimations();
 				}
 				FlxG.sound.play(Paths.sound(closeSound), closeVolume);
-			} else if(daText.finishedText) {
-				var char:DialogueCharacter = arrayCharacters[lastCharacter];
-				if(char != null && char.animation.curAnim != null && char.animationIsLoop() && char.animation.finished) {
-					char.playAnim(char.animation.curAnim.name, true);
-				}
-			} else {
-				var char:DialogueCharacter = arrayCharacters[lastCharacter];
-				if(char != null && char.animation.curAnim != null && char.animation.finished) {
-					char.animation.curAnim.restart();
-				}
 			}
+			else if (acceptButtonReleased || screenJustTouched) {
+				if (!daText.finishedText) {
+                	daText.finishText();
+                	if (skipDialogueThing != null) {
+                	    skipDialogueThing();
+                	}
+            	} else {
+               	 	if (currentText < dialogueList.dialogue.length) {
+                	    startNextDialog();
+                	} else {
+                	    dialogueEnded = true;
+                	    handleDialogueEndAnimations();
+                	}
+            	}
+            	FlxG.sound.play(Paths.sound(closeSound), closeVolume);
+			}
+
+			if (daText.finishedText && (acceptButtonReleased || screenJustTouched)) { 
+            	var char:DialogueCharacter = arrayCharacters[lastCharacter];
+            	if (char != null && char.animation.curAnim != null && char.animationIsLoop() && char.animation.finished) {
+            	    char.playAnim(char.animation.curAnim.name, true);
+            	}
+        	}
 
 			if(box.animation.curAnim.finished) {
-				for (i in 0...textBoxTypes.length) {
-					var checkArray:Array<String> = ['', 'center-'];
-					var animName:String = box.animation.curAnim.name;
-					for (j in 0...checkArray.length) {
-						if(animName == checkArray[j] + textBoxTypes[i] || animName == checkArray[j] + textBoxTypes[i] + 'Open') {
-							box.animation.play(checkArray[j] + textBoxTypes[i], true);
-						}
-					}
-				}
-				updateBoxOffsets(box);
-			}
+         	   for (i in 0...textBoxTypes.length) {
+        	        var checkArray:Array<String> = ['', 'center-'];
+         	       	var animName:String = box.animation.curAnim.name;
+        	        for (j in 0...checkArray.length) {
+        	            if(animName == checkArray[j] + textBoxTypes[i] || animName == checkArray[j] + textBoxTypes[i] + 'Open') {
+        	                box.animation.play(checkArray[j] + textBoxTypes[i], true);
+        	            }
+        	        }
+        	    }
+        	    updateBoxOffsets(box);
+        	}
 
-			if(lastCharacter != -1 && arrayCharacters.length > 0) {
-				for (i in 0...arrayCharacters.length) {
-					var char = arrayCharacters[i];
-					if(char != null) {
-						if(i != lastCharacter) {
-							switch(char.jsonFile.dialogue_pos) {
-								case 'left':
-									char.x -= scrollSpeed * elapsed;
-									if(char.x < char.startingPos + offsetPos) char.x = char.startingPos + offsetPos;
-								case 'center':
-									char.y += scrollSpeed * elapsed;
-									if(char.y > char.startingPos + FlxG.height) char.y = char.startingPos + FlxG.height;
-								case 'right':
-									char.x += scrollSpeed * elapsed;
-									if(char.x > char.startingPos - offsetPos) char.x = char.startingPos - offsetPos;
-							}
-							char.alpha -= 3 * elapsed;
-							if(char.alpha < 0.00001) char.alpha = 0.00001;
-						} else {
-							switch(char.jsonFile.dialogue_pos) {
-								case 'left':
-									char.x += scrollSpeed * elapsed;
-									if(char.x > char.startingPos) char.x = char.startingPos;
-								case 'center':
-									char.y -= scrollSpeed * elapsed;
-									if(char.y < char.startingPos) char.y = char.startingPos;
-								case 'right':
-									char.x -= scrollSpeed * elapsed;
-									if(char.x < char.startingPos) char.x = char.startingPos;
-							}
-							char.alpha += 3 * elapsed;
-							if(char.alpha > 1) char.alpha = 1;
-						}
-					}
-				}
-			}
-		} else { //Dialogue ending
-			if(box != null && box.animation.curAnim.curFrame <= 0) {
-				box.kill();
-				remove(box);
-				box.destroy();
-				box = null;
-			}
+        	if(lastCharacter != -1 && arrayCharacters.length > 0) {
+        	    for (i in 0...arrayCharacters.length) {
+        	        var char = arrayCharacters[i];
+        	        if(char != null) {
+        	            if(i != lastCharacter) {
+        	                switch(char.jsonFile.dialogue_pos) {
+        	                    case 'left':
+        	                        char.x -= scrollSpeed * elapsed;
+        	                        if(char.x < char.startingPos + offsetPos) char.x = char.startingPos + offsetPos;
+        	                    case 'center':
+        	                        char.y += scrollSpeed * elapsed;
+        	                        if(char.y > char.startingPos + FlxG.height) char.y = char.startingPos + FlxG.height;
+        	                    case 'right':
+        	                        char.x += scrollSpeed * elapsed;
+        	                        if(char.x > char.startingPos - offsetPos) char.x = char.startingPos - offsetPos;
+        	                }
+        	                char.alpha -= 3 * elapsed;
+        	                if(char.alpha < 0.00001) char.alpha = 0.00001;
+        	            } else {
+        	                switch(char.jsonFile.dialogue_pos) {
+        	                    case 'left':
+        	                        char.x += scrollSpeed * elapsed;
+        	                        if(char.x > char.startingPos) char.x = char.startingPos;
+        	                    case 'center':
+        	                        char.y -= scrollSpeed * elapsed;
+        	                        if(char.y < char.startingPos) char.y = char.startingPos;
+        	                    case 'right':
+        	                        char.x -= scrollSpeed * elapsed;
+        	                        if(char.x < char.startingPos) char.x = char.startingPos;
+        	                }
+        	                char.alpha += 3 * elapsed;
+        	                if(char.alpha > 1) char.alpha = 1;
+        	            }
+        	        }
+        	    }
+        	}
 
-			if(bgFade != null) {
-				bgFade.alpha -= 0.5 * elapsed;
-				if(bgFade.alpha <= 0) {
-					bgFade.kill();
-					remove(bgFade);
-					bgFade.destroy();
-					bgFade = null;
-				}
-			}
+    	} else { //Dialogue ending
+        	if(box != null && box.animation.curAnim.curFrame <= 0) {
+        	    box.kill();
+        	    remove(box);
+        	    box.destroy();
+        	    box = null;
+        	}
 
-			for (i in 0...arrayCharacters.length) {
-				var leChar:DialogueCharacter = arrayCharacters[i];
-				if(leChar != null) {
-					switch(arrayCharacters[i].jsonFile.dialogue_pos) {
-						case 'left':
-							leChar.x -= scrollSpeed * elapsed;
-						case 'center':
-							leChar.y += scrollSpeed * elapsed;
-						case 'right':
-							leChar.x += scrollSpeed * elapsed;
-					}
-					leChar.alpha -= elapsed * 10;
-				}
-			}
+        	if(bgFade != null) {
+        	    bgFade.alpha -= 0.5 * elapsed;
+        	    if(bgFade.alpha <= 0) {
+        	        bgFade.kill();
+        	        remove(bgFade);
+        	        bgFade.destroy();
+        	        bgFade = null;
+        	    }
+        	}
 
-			if(box == null && bgFade == null) {
-				for (i in 0...arrayCharacters.length) {
-					var leChar:DialogueCharacter = arrayCharacters[0];
-					if(leChar != null) {
-						arrayCharacters.remove(leChar);
-						leChar.kill();
-						remove(leChar);
-						leChar.destroy();
-					}
-				}
-				finishThing();
-				kill();
-			}
+        	for (i in 0...arrayCharacters.length) {
+        	    var leChar:DialogueCharacter = arrayCharacters[i];
+        	    if(leChar != null) {
+        	        switch(arrayCharacters[i].jsonFile.dialogue_pos) {
+        	            case 'left':
+        	                leChar.x -= scrollSpeed * elapsed;
+        	            case 'center':
+        	                leChar.y += scrollSpeed * elapsed;
+        	            case 'right':
+        	                leChar.x += scrollSpeed * elapsed;
+        	        }
+        	        leChar.alpha -= elapsed * 10;
+        	    }
+        	}
+
+        	if(box == null && bgFade == null) {
+        	    while (arrayCharacters.length > 0) {
+        	        var charToRemove:DialogueCharacter = arrayCharacters[0]; 
+        	        arrayCharacters.remove(charToRemove);
+        	        if(charToRemove != null) {
+        	            charToRemove.kill();
+        	            remove(charToRemove);
+        	            charToRemove.destroy();
+        	        }
+        	    }
+        	    finishThing();
+         	   	kill();
+        	}
 		}
 		super.update(elapsed);
+	}
+
+	function handleDialogueEndAnimations():Void {
+    	for (i in 0...textBoxTypes.length) {
+    	    var checkArray:Array<String> = ['', 'center-'];
+    	    var animName:String = box.animation.curAnim.name;
+    	    for (j in 0...checkArray.length) {
+    	        if(animName == checkArray[j] + textBoxTypes[i] || animName == checkArray[j] + textBoxTypes[i] + 'Open') {
+    	            box.animation.play(checkArray[j] + textBoxTypes[i] + 'Open', true);
+    	        }
+    	    }
+    	}
+    	box.animation.curAnim.curFrame = box.animation.curAnim.frames.length - 1;
+    	box.animation.curAnim.reverse();
+    	if(daText != null) {
+    	    daText.kill();
+    	    remove(daText);
+    	    daText.destroy();
+    	}
+    	skipText.visible = false;
+   	 	updateBoxOffsets(box);
+    	FlxG.sound.music.fadeOut(1, 0, (_) -> FlxG.sound.music.stop());
 	}
 
 	var lastCharacter:Int = -1;
@@ -384,8 +408,8 @@ class DialogueBoxPsych extends FlxSpriteGroup
 	}
 
 	inline public static function parseDialogue(path:String):DialogueFile {
-		#if MODS_ALLOWED
-		return cast (FileSystem.exists(path)) ? Json.parse(File.getContent(path)) : dummy();
+		#if MODS_FOR_DESKTOP
+		return cast (mobile.Utils.exists(path)) ? Json.parse(mobile.Utils.getContent(path)) : dummy();
 		#else
 		return cast (Assets.exists(path, TEXT)) ? Json.parse(Assets.getText(path)) : dummy();
 		#end
