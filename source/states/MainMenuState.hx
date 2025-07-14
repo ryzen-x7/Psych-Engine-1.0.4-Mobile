@@ -94,6 +94,8 @@ class MainMenuState extends MusicBeatState
 			rightItem.x -= rightItem.width;
 		}
 
+		add(mobile.Utils.createWatermarkLeft("Port By Azeitona-x7"));
+
 		var psychVer:FlxText = new FlxText(12, FlxG.height - 44, 0, "Psych Engine v" + psychEngineVersion, 12);
 		psychVer.scrollFactor.set();
 		psychVer.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -124,6 +126,11 @@ class MainMenuState extends MusicBeatState
 		#end
 
 		FlxG.camera.follow(camFollow, null, 0.15);
+
+		#if mobile
+	  	addVirtualPad(LEFT_FULL, A_B_C);
+		addVirtualPadCamera();// idk
+	 	#end
 	}
 
 	function createMenuItem(name:String, x:Float, y:Float):FlxSprite
@@ -146,6 +153,13 @@ class MainMenuState extends MusicBeatState
 	var timeNotMoving:Float = 0;
 	override function update(elapsed:Float)
 	{
+		// base controls
+		var accept_a = controls.ACCEPT #if android || virtualPad.buttonA.justPressed #end;
+		var back_b = controls.BACK #if android || virtualPad.buttonB.justPressed #end;
+		var control_c = FlxG.keys.justPressed.CONTROL #if android || virtualPad.buttonC.justPressed #end;
+		//var reset_x = controls.RESET #if android || virtualPad.buttonX.justPressed #end;
+		//var space_y = FlxG.keys.justPressed.SPACE #if android || virtualPad.buttonY.justPressed #end;
+
 		if (FlxG.sound.music.volume < 0.8)
 			FlxG.sound.music.volume = Math.min(FlxG.sound.music.volume + 0.5 * elapsed, 0.8);
 

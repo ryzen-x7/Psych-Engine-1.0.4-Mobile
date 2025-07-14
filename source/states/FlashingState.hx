@@ -44,6 +44,11 @@ class FlashingState extends MusicBeatState
 		FlxTween.tween(texts, {alpha: 1.0}, 0.5, {
 			onComplete: (_) -> updateItems()
 		});
+
+		#if mobile
+    	addVirtualPad(LEFT_RIGHT, A_B);
+		addVirtualPadCamera(); // for camera moves with the buttons (idk)
+    	#end
 	}
 
 	override function update(elapsed:Float)

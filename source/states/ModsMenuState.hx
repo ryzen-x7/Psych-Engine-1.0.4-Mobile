@@ -294,6 +294,10 @@ class ModsMenuState extends MusicBeatState
 		_lastControllerMode = controls.controllerMode;
 
 		changeSelectedMod();
+		#if mobile
+    	addVirtualPad(UP_DOWN, A_B); // can be LEFT_FULL
+		addVirtualPadCamera(); // for camera moves with the buttons (idk)
+    	#end
 		super.create();
 	}
 	

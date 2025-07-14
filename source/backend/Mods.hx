@@ -140,7 +140,7 @@ class Mods
 		if(mobile.Utils.exists(path)) {
 			try {
 				#if sys
-				var rawJson:String = mobile.Utils.getLOLContent(path);
+				var rawJson:String = mobile.Utils.getContent(path);
 				#else
 				var rawJson:String = Assets.getText(path);
 				#end

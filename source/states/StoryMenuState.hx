@@ -185,6 +185,11 @@ class StoryMenuState extends MusicBeatState
 		changeWeek();
 		changeDifficulty();
 
+		#if mobile
+    	addVirtualPad(LEFT_FULL, A_B_C_X);
+    	addVirtualPadCamera();
+    	#end
+
 		super.create();
 	}
 
@@ -196,9 +201,14 @@ class StoryMenuState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
+		var back = controls.BACK || virtualPad.buttonB.justPressed;
+		var accept = controls.ACCEPT || virtualPad.buttonA.justPressed;
+		var control = FlxG.keys.justPressed.CONTROL || virtualPad.buttonC.justPressed;
+		var reset = controls.RESET || virtualPad.buttonX.justPressed;
+
 		if(WeekData.weeksList.length < 1)
 		{
-			if (controls.BACK && !movedBack && !selectedWeek)
+			if (back && !movedBack && !selectedWeek)
 			{
 				FlxG.sound.play(Paths.sound('cancelMenu'));
 				movedBack = true;
@@ -243,36 +253,42 @@ class StoryMenuState extends MusicBeatState
 				changeDifficulty();
 			}
 
-			if (controls.UI_RIGHT)
+			if (controls.UI_RIGHT) {
 				rightArrow.animation.play('press')
-			else
+			} else {
 				rightArrow.animation.play('idle');
+			}
 
-			if (controls.UI_LEFT)
+			if (controls.UI_LEFT) {
 				leftArrow.animation.play('press');
-			else
+			} else {
 				leftArrow.animation.play('idle');
+			}
 
-			if (controls.UI_RIGHT_P)
+			if (controls.UI_RIGHT_P) {
 				changeDifficulty(1);
-			else if (controls.UI_LEFT_P)
+			}
+			else if (controls.UI_LEFT_P) {
 				changeDifficulty(-1);
-			else if (changeDiff)
+			}
+			else if (changeDiff) {
 				changeDifficulty();
+			}
 
-			if(FlxG.keys.justPressed.CONTROL)
+			if(control)
 			{
 				persistentUpdate = false;
 				openSubState(new GameplayChangersSubstate());
 			}
-			else if(controls.RESET)
+			else if(reset)
 			{
 				persistentUpdate = false;
 				openSubState(new ResetScoreSubState('', curDifficulty, '', curWeek));
 				//FlxG.sound.play(Paths.sound('scrollMenu'));
 			}
-			else if (controls.ACCEPT)
+			else if (accept) {
 				selectWeek();
+			}
 		}
 
 		if (controls.BACK && !movedBack && !selectedWeek)

@@ -31,6 +31,12 @@ class ErrorState extends MusicBeatState
 		errorText.borderSize = 2;
 		errorText.screenCenter();
 		add(errorText);
+
+		#if mobile
+    	addVirtualPad(NONE, A_B);
+		addVirtualPadCamera(); // for camera moves with the buttons (idk)
+    	#end
+
 		super.create();
 	}
 

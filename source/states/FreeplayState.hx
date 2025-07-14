@@ -185,6 +185,11 @@ class FreeplayState extends MusicBeatState
 		
 		player = new MusicPlayer(this);
 		add(player);
+
+		#if mobile
+    	addVirtualPad(LEFT_FULL, A_B_C_X_Y);
+    	addVirtualPadCamera();
+    	#end
 		
 		changeSelection();
 		updateTexts();
@@ -217,6 +222,12 @@ class FreeplayState extends MusicBeatState
 	var stopMusicPlay:Bool = false;
 	override function update(elapsed:Float)
 	{
+		var accept_a = controls.ACCEPT #if android || virtualPad.buttonA.justPressed #end;
+		var back_b = controls.BACK #if android || virtualPad.buttonB.justPressed #end;
+		var control_c = FlxG.keys.justPressed.CONTROL #if android || virtualPad.buttonC.justPressed #end;
+		var reset_x = controls.RESET #if android || virtualPad.buttonX.justPressed #end;
+		var space_y = FlxG.keys.justPressed.SPACE #if android || virtualPad.buttonY.justPressed #end;
+
 		if(WeekData.weeksList.length < 1)
 			return;
 
@@ -300,7 +311,7 @@ class FreeplayState extends MusicBeatState
 			}
 		}
 
-		if (controls.BACK)
+		if (back_b)
 		{
 			if (player.playingMusic)
 			{
@@ -323,12 +334,12 @@ class FreeplayState extends MusicBeatState
 			}
 		}
 
-		if(FlxG.keys.justPressed.CONTROL && !player.playingMusic)
+		if(control_c && !player.playingMusic)
 		{
 			persistentUpdate = false;
 			openSubState(new GameplayChangersSubstate());
 		}
-		else if(FlxG.keys.justPressed.SPACE)
+		else if(space_y) // y or idk
 		{
 			if(instPlaying != curSelected && !player.playingMusic)
 			{
@@ -403,7 +414,7 @@ class FreeplayState extends MusicBeatState
 				player.pauseOrResume(!player.playing);
 			}
 		}
-		else if (controls.ACCEPT && !player.playingMusic)
+		else if (accept_a && !player.playingMusic)
 		{
 			persistentUpdate = false;
 			var songLowercase:String = Paths.formatToSongPath(songs[curSelected].songName);
@@ -452,7 +463,7 @@ class FreeplayState extends MusicBeatState
 			DiscordClient.loadModRPC();
 			#end
 		}
-		else if(controls.RESET && !player.playingMusic)
+		else if(reset_x && !player.playingMusic)
 		{
 			persistentUpdate = false;
 			openSubState(new ResetScoreSubState(songs[curSelected].songName, curDifficulty, songs[curSelected].songCharacter));

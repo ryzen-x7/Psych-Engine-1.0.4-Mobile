@@ -41,6 +41,11 @@ class OutdatedSubState extends MusicBeatSubstate
 
 		FlxTween.tween(bg, { alpha: 0.8 }, 0.6, { ease: FlxEase.sineIn });
 		FlxTween.tween(warnText, { alpha: 1.0 }, 0.6, { ease: FlxEase.sineIn });
+
+		#if mobile
+    	addVirtualPad(NONE, A_B);
+		addVirtualPadCamera(); // for camera moves with the buttons (idk)
+    	#end
 	}
 
 	override function update(elapsed:Float)

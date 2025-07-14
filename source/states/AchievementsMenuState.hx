@@ -121,6 +121,10 @@ class AchievementsMenuState extends MusicBeatState
 		add(nameText);
 		
 		_changeSelection();
+		#if mobile
+    	addVirtualPad(UP_DOWN, A_B);
+		addVirtualPadCamera(); // for camera moves with the buttons (idk)
+    	#end
 		super.create();
 		
 		FlxG.camera.follow(camFollow, null, 0.15);
@@ -146,7 +150,8 @@ class AchievementsMenuState extends MusicBeatState
 		return FlxSort.byValues(FlxSort.ASCENDING, Obj1.ID, Obj2.ID);
 
 	var goingBack:Bool = false;
-	override function update(elapsed:Float) {
+	override function update(elapsed:Float)
+	{
 		if(!goingBack && options.length > 1)
 		{
 			var add:Int = 0;
@@ -197,13 +202,13 @@ class AchievementsMenuState extends MusicBeatState
 				}
 			}
 			
-			if(controls.RESET && (options[curSelected].unlocked || options[curSelected].curProgress > 0))
-			{
+			if(controls.RESET #if android || virtualPad.buttonA.justPressed #end && (options[curSelected].unlocked || options[curSelected].curProgress > 0))
+			{ // a
 				openSubState(new ResetAchievementSubstate());
 			}
 		}
 
-		if (controls.BACK) {
+		if (controls.BACK) { // b
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 			MusicBeatState.switchState(new MainMenuState());
 			goingBack = true;
