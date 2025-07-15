@@ -11,11 +11,6 @@
 			"version":"8.1.2"
 		},
 		{
-			"name":"openfl",
-			"type":"haxelib",
-			"version":"9.3.3"
-		},
-		{
 			"name":"flixel",
 			"type":"haxelib",
 			"version":"5.6.1"

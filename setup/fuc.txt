@@ -1,0 +1,8 @@
+lime 8.1.2
+openfl 9.3.3
+
+		{
+			"name":"openfl",
+			"type":"haxelib",
+			"version":"9.3.3"
+		},
